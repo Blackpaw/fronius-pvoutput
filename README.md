@@ -23,11 +23,11 @@ Thanks to:
 # Configuration
 At a minimun the
 * `$dataManagerIP`
-**  IP of your Fronius Inverter
+ *  IP of your Fronius Inverter
 * `$pvOutputApiKEY`
-**  API Key from pvoutput.org
+ *  API Key from pvoutput.org
 * `$pvOutputSID`
-**  Site Id from pvoutput.org
+ *  Site Id from pvoutput.org
 
 Need to be set
 
