@@ -29,7 +29,7 @@ API Key from pvoutput.org
 * `$pvOutputSID`  
 Site Id from pvoutput.org
 
-Need to be set
+Need to be set.
 
 The fronius.php script can be edited directly, but better to create a "config.php" file in the same directory as the script, this will be included automatically. A sample is displayed below with dummy values.
 
