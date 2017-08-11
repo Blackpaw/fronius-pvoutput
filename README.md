@@ -41,6 +41,7 @@ $pvOutputSID = "12345";
 // Archerfield
 $weatherStationURL = "http://reg.bom.gov.au/fwo/IDQ60901/IDQ60901.94575.json";
 $pvTimeszone = "Australia/Brisbane";
+$logToCSV = false;
 ?>
 ```
 

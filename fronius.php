@@ -8,8 +8,16 @@ $dataManagerIP = "";
 $pvOutputApiKEY = "";
 $pvOutputSID = "";
 $weatherStationURL = null;
+$logToCSV = false;
+
 // Default to Brisbane
 $pvTimeszone = "Australia/Brisbane";
+
+// Define Date & Time
+date_default_timezone_set($pvTimeszone);
+$system_time= time();
+$date = date('Ymd', time());
+$time = date('H:i', time());
 
 // Load config if exists (sets above options)
 $configFile = dirname(__FILE__)  . DIRECTORY_SEPARATOR . 'config.php';
@@ -21,6 +29,10 @@ if (file_exists($configFile))
 $dataFile = dirname(__FILE__)  . DIRECTORY_SEPARATOR . 'fronius.dat';
 echo "Data file = $dataFile\n";
 
+// CSV file
+$csvFile = dirname(__FILE__)  . DIRECTORY_SEPARATOR . "fronius-$date.csv";
+echo "CSV file = $csvFile\n";
+
 // Inverter & Smart Meter API URLs
 $inverterDataURL = "http://".$dataManagerIP."/solar_api/v1/GetPowerFlowRealtimeData.fcgi";
 $meterDataURL = "http://".$dataManagerIP."/solar_api/v1/GetMeterRealtimeData.cgi?Scope=Device&DeviceId=0";
@@ -28,12 +40,6 @@ $meterDataURL = "http://".$dataManagerIP."/solar_api/v1/GetMeterRealtimeData.cgi
 
 print "Inverter URL = " . "<" . $inverterDataURL . ">\n";
 print "Meter URL = " . "<" . $meterDataURL . ">\n";
-
-// Define Date & Time
-date_default_timezone_set($pvTimeszone);
-$system_time= time();
-$date = date('Ymd', time());
-$time = date('H:i', time());
 
 // Predeclare our variables
 $consumptionEnergyTotal = NULL;
@@ -97,8 +103,11 @@ if (file_exists($dataFile))
 		// Avg Producion Level
 		$inverterPowerLive = ($inverterEnergyTotal - $prevInverterEnergyTotal) / $span  * 60 * 60;	
 
-		// Avg Consumption Level
-		$consumptionPowerLive = ($consumptionEnergyTotal - $prevConsumptionEnergyTotal) / $span  * 60 * 60;	
+		if ($consumptionEnergyTotal != null)
+		{
+			// Avg Consumption Level
+			$consumptionPowerLive = ($consumptionEnergyTotal - $prevConsumptionEnergyTotal) / $span  * 60 * 60;	
+		}
 	}
 }
 
@@ -123,8 +132,9 @@ $pvOutputURL = $pvOutputApiURL
                 . "&d=" .   $date
                 . "&t=" .   $time
                 . "&v1=" .  $inverterEnergyTotal
-                . "&v6=" .  $inverterVoltageLive
                 . "&c1=1";
+if ($inverterVoltageLive != null)
+    $pvOutputURL = "$pvOutputURL&v6=$inverterVoltageLive";
 if ($consumptionEnergyTotal != null)
 	$pvOutputURL = "$pvOutputURL&v3=$consumptionEnergyTotal";
 if ($temperature != null)
@@ -156,6 +166,14 @@ if (substr($rc, 0, strlen($rc_ok)) !== $rc_ok)
     	file_put_contents($dataFile, $saveData);
 }
 
-
-
+if ($logToCSV)
+{
+	// Append to CSV File
+	if (! file_exists($csvFile))
+		file_put_contents($csvFile, "time,v1,v2,v3,v4,v5,v6\n");
+	file_put_contents($csvFile, "$time,$inverterEnergyTotal,$inverterPowerLive,$consumptionEnergyTotal,$consumptionPowerLive,$temperature,$inverterVoltageLive\n", FILE_APPEND);
+}
 ?>
+
+
+
