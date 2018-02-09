@@ -13,17 +13,17 @@ $logToCSV = false;
 // Default to Brisbane
 $pvTimeszone = "Australia/Brisbane";
 
-// Define Date & Time
-date_default_timezone_set($pvTimeszone);
-$system_time= time();
-$date = date('Ymd', time());
-$time = date('H:i', time());
-
 // Load config if exists (sets above options)
 $configFile = dirname(__FILE__)  . DIRECTORY_SEPARATOR . 'config.php';
 echo "Config file = $configFile\n";
 if (file_exists($configFile))
 	include $configFile;
+
+// Define Date & Time
+date_default_timezone_set($pvTimeszone);
+$system_time= time();
+$date = date('Ymd', time());
+$time = date('H:i', time());
 
 // Data file
 $dataFile = dirname(__FILE__)  . DIRECTORY_SEPARATOR . 'fronius.dat';
